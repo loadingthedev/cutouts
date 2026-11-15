@@ -1,6 +1,6 @@
 {
   "name": "cutouts",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Flat colour figures that draw themselves and answer the pointer. For React and for anything with a DOM.",
   "keywords": ["svg", "illustration", "animation", "react", "figures"],
   "license": "MIT",
@@ -26,6 +26,7 @@
   },
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "prepack": "bun run build",
     "demo": "bun run demo/build.ts",
     "shots": "bun run scripts/shots.ts",
     "check": "bun run scripts/check.ts",
