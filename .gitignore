@@ -2,3 +2,5 @@ node_modules
 dist
 demo/dist
 shots
+.env
+.DS_Store

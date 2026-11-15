@@ -12,4 +12,5 @@ Flat colour figures that draw themselves and answer the pointer. A personal open
 - Do not invent numbers, users or testimonials in the README or the demo. Every number comes from a real run.
 - Never add `Co-Authored-By` lines or "Generated with" footers to commits, PRs or any GitHub content.
 - Comments only for a non-obvious "why".
-- Do not publish to npm, create the GitHub repo, or push anywhere until Aftab says so in the thread.
+- Aftab gave the go-ahead on 2026-11-15 for these steps: the public repo `loadingthedev/cutouts`, CI, GitHub Pages, the hero GIF, publishing `cutouts` 0.1.0 to npm, and the shadcn registry. Anything beyond them still waits for his word in the thread.
+- Do not edit the portfolio repo from this project; its panel is done from another thread.
