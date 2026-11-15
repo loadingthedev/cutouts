@@ -48,6 +48,7 @@ for (const figure of figures) {
     expect(figure.about.length).toBeGreaterThan(10);
     expect(svg(figure)).toContain(`role="img" aria-label="${figure.label}"`);
     expect(svg(figure, { label: 'Mine' })).toContain('aria-label="Mine"');
+    expect(svg(figure, { label: '' })).toContain(`aria-label="${figure.label}"`);
   });
 
   test(`${figure.name} answers the pointer with finite poses for parts it has`, () => {

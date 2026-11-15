@@ -100,7 +100,7 @@ const WAIT = '<style>@media (prefers-reduced-motion:no-preference){svg[data-wait
 /** The whole figure as an SVG string. Needs no DOM. */
 export function svg(figure: Figure, options: Options = {}): string {
   const field = options.field !== false;
-  const root: Attrs = { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 200 200', width: '100%', role: 'img', 'aria-label': options.label ?? figure.label, 'data-cutout': figure.name };
+  const root: Attrs = { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 200 200', width: '100%', role: 'img', 'aria-label': options.label || figure.label, 'data-cutout': figure.name };
   // Without the field the figure sits on the page's own colour, and its parts may travel past the canvas.
   if (!field) root.overflow = 'visible';
   if (options.wait) root['data-wait'] = '';

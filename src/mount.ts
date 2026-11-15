@@ -20,19 +20,35 @@ type Step = (dt: number) => boolean;
 // One loop for every figure on the page. A figure at rest leaves it; it stops when none is moving.
 const live = new Set<Step>();
 let last = 0;
+let queued = false;
 let starts = 0;
 function frame(now: number) {
-  const dt = Math.min(0.032, (now - last) / 1000);
+  // A frame's time can be a little before the moment wake() noted, hence the floor.
+  const dt = Math.max(0, Math.min(0.032, (now - last) / 1000));
   last = now;
-  for (const step of live) if (!step(dt)) live.delete(step);
-  if (live.size) requestAnimationFrame(frame);
+  queued = false;
+  for (const step of live) {
+    try {
+      if (!step(dt)) live.delete(step);
+    } catch (error) {
+      // One figure's broken answer must not stop the others: drop it and let the error surface on its own.
+      live.delete(step);
+      queueMicrotask(() => {
+        throw error;
+      });
+    }
+  }
+  if (live.size) request();
+}
+function request() {
+  if (queued) return;
+  queued = true;
+  requestAnimationFrame(frame);
 }
 function wake(step: Step) {
-  if (!live.size) {
-    last = performance.now();
-    requestAnimationFrame(frame);
-  }
+  if (!live.size) last = performance.now();
   live.add(step);
+  request();
 }
 
 const num = (el: SVGElement, key: string) => +(el.dataset[key] ?? 0);
@@ -66,7 +82,7 @@ export function mount(target: Element, figure: Figure, options: Options = {}): M
   if (!found) {
     target.innerHTML = svg(figure, options);
     found = target.firstElementChild!;
-  } else if (options.label !== undefined) found.setAttribute('aria-label', options.label);
+  } else if (options.label) found.setAttribute('aria-label', options.label);
   const root = found as SVGSVGElement;
 
   const still = matchMedia('(prefers-reduced-motion: reduce)');
@@ -92,7 +108,7 @@ export function mount(target: Element, figure: Figure, options: Options = {}): M
   let anims: Animation[] = [];
 
   const step: Step = (dt) => {
-    const playing = play && visible && !on && !still.matches;
+    const playing = shown && play && visible && !on && !still.matches;
     const active = shown && !entering && (on || playing);
     clock += dt;
     const [x, y] = on ? [px, py] : tour(clock);
@@ -106,6 +122,7 @@ export function mount(target: Element, figure: Figure, options: Options = {}): M
       let away = false;
       KEYS.forEach((key, i) => {
         let to = pose?.[key] ?? REST[key];
+        if (!Number.isFinite(to)) to = REST[key];
         let cur = part.cur[i]!;
         let vel = part.vel[i]!;
         // A turn is the same picture every 360 degrees: go the short way round.
@@ -122,7 +139,8 @@ export function mount(target: Element, figure: Figure, options: Options = {}): M
       });
       if (away || part.dirty) write(part, away);
     }
-    return moving || on || playing || entering > 0;
+    // Before it is shown there is nothing to move; enter() wakes the loop again.
+    return moving || entering > 0 || (shown && on) || playing;
   };
 
   function write(part: Part, away: boolean) {
@@ -153,9 +171,12 @@ export function mount(target: Element, figure: Figure, options: Options = {}): M
   }
 
   const seen = new IntersectionObserver(
-    ([entry]) => {
+    (entries) => {
+      // Several entries can arrive at once; the last is the present.
+      const entry = entries[entries.length - 1];
       visible = !!entry?.isIntersecting;
-      if (!shown && entry && entry.intersectionRatio >= 0.25) {
+      // A quarter in view, or any of it when it is too tall for a quarter ever to fit.
+      if (!shown && entry && (entry.intersectionRatio >= 0.25 || (visible && entry.boundingClientRect.height > 4 * innerHeight))) {
         shown = true;
         if (still.matches) for (const el of fx) el.style.opacity = '';
         else enter();
@@ -168,7 +189,7 @@ export function mount(target: Element, figure: Figure, options: Options = {}): M
   const move = (e: PointerEvent) => {
     if (still.matches) return;
     const box = root.getBoundingClientRect();
-    if (!box.width) return;
+    if (!box.width || !box.height) return;
     px = ((e.clientX - box.left) / box.width) * 200;
     py = ((e.clientY - box.top) / box.height) * 200;
     on = true;
@@ -191,7 +212,7 @@ export function mount(target: Element, figure: Figure, options: Options = {}): M
     update(next) {
       if ('intensity' in next) level = intensity(next.intensity);
       if ('play' in next) play = !!next.play;
-      if (next.label !== undefined) root.setAttribute('aria-label', next.label);
+      if (next.label !== undefined) root.setAttribute('aria-label', next.label || figure.label);
       wake(step);
     },
     replay() {

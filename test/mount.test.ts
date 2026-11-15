@@ -6,7 +6,9 @@ import { type Mounted, bars, mount as mountFigure, orbit, svg } from '../src/ind
 let reduced = false;
 let frames: FrameRequestCallback[] = [];
 let animated: Element[] = [];
-let see: (ratio: number) => void = () => {};
+let seers: ((ratios: number[]) => void)[] = [];
+// Every figure mounted in the test sees the same thing.
+const see = (...ratios: number[]) => seers.forEach((seer) => seer(ratios));
 let now = 0;
 let mounted: Mounted[] = [];
 
@@ -24,7 +26,12 @@ beforeAll(() => {
   globalThis.performance.now = () => now;
   globalThis.IntersectionObserver = class {
     constructor(cb: IntersectionObserverCallback) {
-      see = (ratio) => cb([{ isIntersecting: ratio > 0, intersectionRatio: ratio } as IntersectionObserverEntry], this as unknown as IntersectionObserver);
+      seers.push((ratios) =>
+        cb(
+          ratios.map((ratio) => ({ isIntersecting: ratio > 0, intersectionRatio: ratio, boundingClientRect: { height: 200 } }) as IntersectionObserverEntry),
+          this as unknown as IntersectionObserver,
+        ),
+      );
     }
     observe() {}
     disconnect() {}
@@ -39,6 +46,7 @@ afterAll(() => GlobalRegistrator.unregister());
 beforeEach(() => {
   reduced = false;
   animated = [];
+  seers = [];
   document.body.innerHTML = '';
 });
 // Every figure shares one loop, so a test must not leave a figure running in it.
@@ -172,4 +180,58 @@ test('destroy leaves the drawing as the server sent it', () => {
   expect(el.querySelectorAll('[style]').length).toBe(0);
   run(300);
   expect(frames.length).toBe(0);
+});
+
+test('when two sightings arrive together, the later one counts', () => {
+  const el = stage(svg(orbit));
+  mount(el, orbit);
+  see(0.1, 0.6);
+  expect(animated.length).toBeGreaterThan(0);
+});
+
+test('destroying and mounting again does not start a second loop', () => {
+  const el = stage(svg(orbit));
+  const first = mount(el, orbit);
+  first.update({ play: true });
+  first.destroy();
+  mount(el, orbit).update({ play: true });
+  expect(frames.length).toBe(1);
+  run(100);
+  expect(frames.length).toBe(0);
+});
+
+test('a figure whose answer throws or is not a number does not stop the others', async () => {
+  const thrown: unknown[] = [];
+  const real = globalThis.queueMicrotask;
+  // The runtime rethrows a figure's error on a microtask; catch it here instead of failing the run.
+  globalThis.queueMicrotask = (cb) => {
+    try {
+      cb();
+    } catch (error) {
+      thrown.push(error);
+    }
+  };
+  const junk = stage(svg(orbit));
+  const fine = stage(svg(bars));
+  mount(stage(svg(orbit)), { ...orbit, answer: () => { throw new Error('bad figure'); } }, { play: true });
+  mount(junk, { ...orbit, answer: () => ({ disc: { x: NaN, y: Infinity } }) }, { play: true });
+  mount(fine, bars, { play: true });
+  see(1);
+  await entered();
+  run(1000);
+  globalThis.queueMicrotask = real;
+  expect(String(thrown[0])).toContain('bad figure');
+  expect(thrown.length).toBe(1);
+  expect(styles(fine).some((s) => s.transform)).toBe(true);
+  expect(styles(junk).some((s) => s.transform)).toBe(false);
+});
+
+test('an empty label falls back to the figure\'s own', () => {
+  const el = stage(svg(orbit));
+  const figure = mount(el, orbit, { label: '' });
+  expect(el.querySelector('svg')!.getAttribute('aria-label')).toBe(orbit.label);
+  figure.update({ label: 'Mine' });
+  expect(el.querySelector('svg')!.getAttribute('aria-label')).toBe('Mine');
+  figure.update({ label: '' });
+  expect(el.querySelector('svg')!.getAttribute('aria-label')).toBe(orbit.label);
 });

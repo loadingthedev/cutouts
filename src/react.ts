@@ -11,14 +11,17 @@ function component(figure: Figure) {
     const el = useRef<HTMLDivElement>(null);
     const mounted = useRef<Mounted | null>(null);
     useImperativeHandle(ref, () => el.current!);
-    // The drawing is in the first HTML the server sends; the effect below only adds motion to it.
+    const name = label ?? rest['aria-label'];
+    // The drawing is in the first HTML the server sends; the effects below only add motion to it.
     // A component always brings its script, so by default the parts wait for it instead of showing and starting over.
-    const html = useMemo(() => svg(figure, { label: label ?? rest['aria-label'], field, wait }), [label, rest['aria-label'], field, wait]);
+    // The name is left out of the dependencies: a new one is set in place below, without drawing the figure again.
+    const html = useMemo(() => svg(figure, { label: name, field, wait }), [field, wait]);
     useEffect(() => {
       mounted.current = mount(el.current!, figure, { intensity, play });
       return () => mounted.current?.destroy();
     }, [html]);
     useEffect(() => mounted.current?.update({ intensity, play }), [intensity, play]);
+    useEffect(() => mounted.current?.update({ label: name ?? '' }), [name]);
     return createElement('div', { ...rest, 'aria-label': undefined, ref: el, dangerouslySetInnerHTML: { __html: html } });
   });
   Cutout.displayName = figure.name[0]!.toUpperCase() + figure.name.slice(1);
