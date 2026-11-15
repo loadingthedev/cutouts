@@ -166,6 +166,7 @@ export function mount(target: Element, figure: Figure, options: Options = {}): M
   const move = (e: PointerEvent) => {
     if (still.matches) return;
     const box = root.getBoundingClientRect();
+    if (!box.width) return;
     px = ((e.clientX - box.left) / box.width) * 200;
     py = ((e.clientY - box.top) / box.height) * 200;
     on = true;
