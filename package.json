@@ -1,0 +1,45 @@
+{
+  "name": "cutouts",
+  "version": "0.0.0",
+  "description": "Flat colour figures that draw themselves and answer the pointer. For React and for anything with a DOM.",
+  "keywords": ["svg", "illustration", "animation", "react", "figures"],
+  "license": "MIT",
+  "author": "Aftab Khan",
+  "type": "module",
+  "sideEffects": false,
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "demo": "bun run demo/build.ts",
+    "shots": "bun run scripts/shots.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^19.3.1"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "happy-dom": "^21.0.4",
+    "playwright-core": "^1.65.1",
+    "react-dom": "^19.3.1",
+    "typescript": "^7.0.2"
+  }
+}
