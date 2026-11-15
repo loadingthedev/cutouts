@@ -17,6 +17,39 @@ const script = await Bun.build({ entrypoints: [`${import.meta.dir}/main.ts`], fo
 if (!script.success) throw new AggregateError(script.logs);
 await Bun.write(`${out}/main.js`, script.outputs[0]!);
 
+// The shadcn registry item: `npx shadcn@latest add <site>/r/cutouts.json` installs the package and adds this one file.
+const components = figures.map((f) => f.name[0]!.toUpperCase() + f.name.slice(1));
+await Bun.write(
+  `${out}/r/cutouts.json`,
+  JSON.stringify(
+    {
+      $schema: 'https://ui.shadcn.com/schema/registry-item.json',
+      name: 'cutouts',
+      type: 'registry:ui',
+      title: 'Cutouts',
+      description: `${figures.length} flat colour figures that draw themselves and answer the pointer.`,
+      dependencies: ['cutouts'],
+      files: [
+        {
+          path: 'components/ui/cutouts.tsx',
+          type: 'registry:ui',
+          content: `// The figures from the cutouts package. This file is yours: wrap them, restyle them, or keep only the ones you use.
+// To recolour them, set --cutouts-blue, --cutouts-red and the rest on any parent.
+// Docs: https://cutouts.loadingthelife.eu.org/
+export {
+${components.map((name) => `  ${name},`).join('\n')}
+} from "cutouts/react";
+export type { CutoutProps } from "cutouts/react";
+`,
+        },
+      ],
+      docs: 'Docs: https://cutouts.loadingthelife.eu.org/',
+    },
+    null,
+    2,
+  ),
+);
+
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const band = [all.look, all.snip, all.orbit, all.dawn, all.keys];
 
