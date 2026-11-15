@@ -59,8 +59,8 @@ const tile = (f: Figure) => `
         <figcaption><h3>${f.name}</h3><p>${esc(f.about)}</p></figcaption>
       </figure>`;
 
-const code = (title: string, body: string) => `
-        <div class="snippet"><h3>${title}</h3><pre><code>${esc(body.trim())}</code></pre></div>`;
+const code = (title: string, body: string, wide = false) => `
+        <div class="snippet${wide ? ' wide' : ''}"><h3>${title}</h3><pre><code>${esc(body.trim())}</code></pre></div>`;
 
 const html = `<!doctype html>
 <html lang="en">
@@ -142,6 +142,7 @@ figcaption p { font-size: 14px; line-height: 1.4; margin-top: 4px; opacity: 0.72
 .use { scroll-margin-top: 56px; border-top: var(--rule); padding: clamp(32px, 6vw, 80px) var(--pad); display: grid; gap: clamp(28px, 4vw, 48px); }
 .use h2 { font: 800 clamp(40px, 7vw, 96px)/0.9 Bricolage, sans-serif; letter-spacing: -0.04em; }
 .snippets { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); align-items: start; }
+.snippet.wide { grid-column: 1 / -1; }
 .snippet h3 { font: 800 21px/1.1 Bricolage, sans-serif; letter-spacing: -0.02em; margin-bottom: 10px; }
 pre { margin: 0; padding: 18px 20px; background: var(--ink); color: var(--paper); font-size: 13.5px; line-height: 1.6; overflow-x: auto; }
 .facts { display: grid; gap: 22px 40px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); padding: 0; margin: 0; list-style: none; }
@@ -208,7 +209,7 @@ const html = svg(orbit);`,
   --cutouts-red: #e11d48;
   --cutouts-paper: #fafaf9;
 }`,
-    )}
+    )}${code('With shadcn', 'npx shadcn@latest add https://cutouts.loadingthelife.eu.org/r/cutouts.json', true)}
     </div>
     <ul class="facts">
       <li><b>intensity</b>How strongly a figure moves, from <code>0</code> to <code>1</code>. The slider above sets it for every figure on this page.</li>

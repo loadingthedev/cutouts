@@ -22,6 +22,14 @@ npm i cutouts
 
 No dependencies. ESM only. React 18 or later is an optional peer, needed only by `cutouts/react`.
 
+With shadcn, which adds the package and a `components/ui/cutouts.tsx` that re-exports the React components for you to wrap or restyle:
+
+```sh
+npx shadcn@latest add https://cutouts.loadingthelife.eu.org/r/cutouts.json
+```
+
+Then `import { Orbit } from "@/components/ui/cutouts"`.
+
 ## Use
 
 ### React

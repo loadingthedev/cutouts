@@ -14,3 +14,5 @@ Flat colour figures that draw themselves and answer the pointer. A personal open
 - Comments only for a non-obvious "why".
 - Aftab gave the go-ahead on 2026-11-15 for these steps: the public repo `loadingthedev/cutouts`, CI, GitHub Pages, the hero GIF, publishing `cutouts` 0.1.0 to npm, and the shadcn registry. Anything beyond them still waits for his word in the thread.
 - Do not edit the portfolio repo from this project; its panel is done from another thread.
+- The demo is served by Cloudflare Pages at https://cutouts.loadingthelife.eu.org/, redeployed from `main` on every push through Cloudflare's Git integration (build `bun install --frozen-lockfile && bun run demo`, output `demo/dist`, `BUN_VERSION=1.4.0`). No wrangler file and no GitHub Pages.
+- Aftab publishes to npm himself. Do not run `npm publish`.
