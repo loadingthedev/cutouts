@@ -6,7 +6,7 @@ Twenty-five flat colour figures that draw themselves and answer the pointer. For
 [![CI](https://github.com/loadingthedev/cutouts/actions/workflows/ci.yml/badge.svg)](https://github.com/loadingthedev/cutouts/actions/workflows/ci.yml)
 [![license](https://img.shields.io/github/license/loadingthedev/cutouts)](https://github.com/loadingthedev/cutouts/blob/main/LICENSE)
 
-<!-- hero GIF -->
+![Eight of the figures drawing themselves and then moving on their own: an eye, a bar chart, scissors on a dashed line, moons on a ring, a split disc, a sun over the sea, chat bubbles and a row of keys](https://raw.githubusercontent.com/loadingthedev/cutouts/main/assets/hero.gif)
 
 Live, with a slider for `intensity`: **[loadingthedev.github.io/cutouts](https://loadingthedev.github.io/cutouts/)**
 
@@ -148,7 +148,7 @@ These are the defaults, and they are written into every figure as fallbacks, so 
 - **Reduced motion.** With `prefers-reduced-motion`, a figure is complete and still: no entrance, no `play`, no answer to the pointer.
 - **Touch.** A touch moves the figure the way a pointer does and it settles when the finger lifts. Nothing hovers on a touch screen, so `play` is how a figure shows its answer there.
 - **Performance.** Every figure on a page shares one `requestAnimationFrame` loop. A figure at rest does no work, and the loop stops when nothing is moving. The entrance runs on the Web Animations API.
-- **Size.** Measured with `bun build --minify` and `gzip -9` on version 0.0.0: one figure with `mount` is 6.0 kB (3.0 kB gzipped), all twenty-five are 26.0 kB (9.8 kB gzipped), and one figure with `svg` alone is 2.0 kB (1.2 kB gzipped). A figure you do not import is not in your bundle. A figure's SVG string is between 0.6 kB and 2.6 kB.
+- **Size.** Measured with `bun build --minify` and `gzip -9` on version 0.1.0: one figure with `mount` is 6.2 kB (3.1 kB gzipped), all twenty-five are 26.3 kB (9.9 kB gzipped), and one figure with `svg` alone is 2.0 kB (1.2 kB gzipped). A figure you do not import is not in your bundle. A figure's SVG string is between 0.6 kB and 2.6 kB.
 
 ## Make your own
 
@@ -183,6 +183,7 @@ bun run check     # the same promises in a real Chrome
 bun run demo      # writes demo/dist/index.html
 bun run shots     # contact sheets of every figure, to look at
 bun run build     # dist/, plain ESM and types
+bun run hero      # records assets/hero.gif (needs ffmpeg)
 ```
 
 ## License
