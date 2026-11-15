@@ -116,3 +116,11 @@ test('the README lists every figure with what it does', async () => {
   const readme = await Bun.file(`${import.meta.dir}/../README.md`).text();
   for (const figure of figures) expect(readme).toContain(`| \`${figure.name}\` | \`${figure.name[0]!.toUpperCase()}${figure.name.slice(1)}\` | ${figure.label}. | ${figure.about} |`);
 });
+
+test('React stays an optional peer from 18 up, and there are no runtime dependencies', async () => {
+  // bun add once rewrote this range to the installed version without saying so.
+  const pkg = await Bun.file(`${import.meta.dir}/../package.json`).json();
+  expect(pkg.peerDependencies).toEqual({ react: '>=18' });
+  expect(pkg.peerDependenciesMeta.react.optional).toBe(true);
+  expect(pkg.dependencies).toBeUndefined();
+});
