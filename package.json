@@ -5,6 +5,12 @@
   "keywords": ["svg", "illustration", "animation", "react", "figures"],
   "license": "MIT",
   "author": "Aftab Khan",
+  "homepage": "https://loadingthedev.github.io/cutouts/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loadingthedev/cutouts.git"
+  },
+  "bugs": "https://github.com/loadingthedev/cutouts/issues",
   "type": "module",
   "sideEffects": false,
   "files": ["dist"],
@@ -24,7 +30,8 @@
     "shots": "bun run scripts/shots.ts",
     "check": "bun run scripts/check.ts",
     "test": "bun test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "hero": "bun run scripts/hero.ts"
   },
   "peerDependencies": {
     "react": "^19.3.1"

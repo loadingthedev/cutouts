@@ -2,8 +2,13 @@
 
 Twenty-five flat colour figures that draw themselves and answer the pointer. For React and for anything with a DOM.
 
-<!-- hero GIF goes here: ![...](assets/hero.gif) -->
-<!-- live demo link goes here once the page is on GitHub Pages -->
+[![npm](https://img.shields.io/npm/v/cutouts)](https://www.npmjs.com/package/cutouts)
+[![CI](https://github.com/loadingthedev/cutouts/actions/workflows/ci.yml/badge.svg)](https://github.com/loadingthedev/cutouts/actions/workflows/ci.yml)
+[![license](https://img.shields.io/github/license/loadingthedev/cutouts)](https://github.com/loadingthedev/cutouts/blob/main/LICENSE)
+
+<!-- hero GIF -->
+
+Live, with a slider for `intensity`: **[loadingthedev.github.io/cutouts](https://loadingthedev.github.io/cutouts/)**
 
 Each figure is a flat geometric drawing on its own coloured field. It draws itself when it scrolls into view, and then the pointer does something to it that belongs to that figure alone: an eye follows it, scissors snip along a line, a chart scrubs, a switch flips.
 
