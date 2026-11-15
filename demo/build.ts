@@ -34,6 +34,7 @@ const html = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://cutouts.loadingthelife.eu.org/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23F3F2EE'/%3E%3Ccircle cx='8' cy='8' r='6' fill='%23FF5533'/%3E%3C/svg%3E">
 <title>cutouts: flat colour figures that draw themselves</title>
 <meta name="description" content="${figures.length} flat colour figures that draw themselves and answer the pointer. For React and for anything with a DOM. No dependencies.">

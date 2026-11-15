@@ -8,7 +8,7 @@ Twenty-five flat colour figures that draw themselves and answer the pointer. For
 
 ![Eight of the figures drawing themselves and then moving on their own: an eye, a bar chart, scissors on a dashed line, moons on a ring, a split disc, a sun over the sea, chat bubbles and a row of keys](https://raw.githubusercontent.com/loadingthedev/cutouts/main/assets/hero.gif)
 
-Live, with a slider for `intensity`: **[loadingthedev.github.io/cutouts](https://loadingthedev.github.io/cutouts/)**
+Live, with a slider for `intensity`: **[cutouts.loadingthelife.eu.org](https://cutouts.loadingthelife.eu.org/)**
 
 Each figure is a flat geometric drawing on its own coloured field. It draws itself when it scrolls into view, and then the pointer does something to it that belongs to that figure alone: an eye follows it, scissors snip along a line, a chart scrubs, a switch flips.
 
