@@ -110,3 +110,8 @@ test('every figure has a React component that renders the drawing on the server'
     expect(html).toContain('aria-label="Mine"');
   }
 });
+
+test('the README lists every figure with what it does', async () => {
+  const readme = await Bun.file(`${import.meta.dir}/../README.md`).text();
+  for (const figure of figures) expect(readme).toContain(`| \`${figure.name}\` | \`${figure.name[0]!.toUpperCase()}${figure.name.slice(1)}\` | ${figure.label}. | ${figure.about} |`);
+});
