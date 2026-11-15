@@ -75,6 +75,13 @@ test('the field can be left out', () => {
   expect(out).toContain('overflow="visible"');
 });
 
+test('wait holds the parts back with CSS alone, and only when motion is allowed', () => {
+  const out = svg(figures[0]!, { wait: true });
+  expect(out).toContain(' data-wait=""');
+  expect(out).toContain('<style>@media (prefers-reduced-motion:no-preference){svg[data-wait] [data-fx]{');
+  expect(svg(figures[0]!)).not.toMatch(/data-wait|<style/);
+});
+
 test('a label cannot break out of its attribute', () => {
   const out = svg(figures[0]!, { label: '"><script>alert(1)</script>&' });
   wellFormed(out);
@@ -97,6 +104,8 @@ test('every figure has a React component that renders the drawing on the server'
     expect(Component).toBeDefined();
     const html = renderToString(createElement(Component, { label: 'Mine', className: 'art' }));
     expect(html).toStartWith('<div class="art"><svg');
+    expect(html).toContain('data-wait');
+    expect(renderToString(createElement(Component, { wait: false }))).not.toContain('data-wait');
     expect(html).toContain(`data-cutout="${figure.name}"`);
     expect(html).toContain('aria-label="Mine"');
   }

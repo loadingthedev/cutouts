@@ -81,11 +81,13 @@ test('mount draws the figure into an empty element', () => {
   expect(el.querySelector('svg')?.getAttribute('aria-label')).toBe('Mine');
 });
 
-test('mount adopts a server-rendered figure without redrawing it', () => {
-  const el = stage(svg(orbit));
-  const before = el.querySelector('svg');
+test('mount adopts a server-rendered figure without redrawing it, and takes over a waiting one', () => {
+  const el = stage(svg(orbit, { wait: true }));
+  const before = el.querySelector('svg')!;
+  expect(before.hasAttribute('data-wait')).toBe(true);
   mount(el, orbit);
   expect(el.querySelector('svg')).toBe(before);
+  expect(before.hasAttribute('data-wait')).toBe(false);
 });
 
 test('parts wait hidden, then the entrance plays once the figure is a quarter in view', async () => {

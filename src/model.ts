@@ -65,6 +65,11 @@ export type Options = {
   label?: string;
   /** Draw the coloured field behind the figure. Default true. */
   field?: boolean;
+  /**
+   * Hold the parts back until `mount` draws them, so a figure already in view does not show complete and then start over.
+   * If no script arrives they appear by themselves after three seconds. Default false: the string alone is the whole drawing.
+   */
+  wait?: boolean;
 };
 
 export const stroke = { fill: 'none', stroke: C.ink, 'stroke-width': 3, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' };
@@ -90,11 +95,14 @@ const attrs = (a: Attrs) =>
     .join('');
 const markup = (shapes: Shape[]): string => shapes.map(([el, a, kids]) => (kids ? `<${el}${attrs(a)}>${markup(kids)}</${el}>` : `<${el}${attrs(a)}/>`)).join('');
 
+const WAIT = '<style>@media (prefers-reduced-motion:no-preference){svg[data-wait] [data-fx]{animation:cutouts-wait 3s step-end}}@keyframes cutouts-wait{from{opacity:0}}</style>';
+
 /** The whole figure as an SVG string. Needs no DOM. */
 export function svg(figure: Figure, options: Options = {}): string {
   const field = options.field !== false;
   const root: Attrs = { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 200 200', width: '100%', role: 'img', 'aria-label': options.label ?? figure.label, 'data-cutout': figure.name };
   // Without the field the figure sits on the page's own colour, and its parts may travel past the canvas.
   if (!field) root.overflow = 'visible';
-  return `<svg${attrs(root)}>${field ? `<rect width="200" height="200" fill="${C[figure.bg]}"/>` : ''}${markup(figure.shapes())}</svg>`;
+  if (options.wait) root['data-wait'] = '';
+  return `<svg${attrs(root)}>${options.wait ? WAIT : ''}${field ? `<rect width="200" height="200" fill="${C[figure.bg]}"/>` : ''}${markup(figure.shapes())}</svg>`;
 }

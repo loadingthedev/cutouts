@@ -7,12 +7,13 @@ import { type Mounted, mount } from './mount.ts';
 export type CutoutProps = Options & Omit<ComponentPropsWithoutRef<'div'>, 'children' | 'dangerouslySetInnerHTML'>;
 
 function component(figure: Figure) {
-  const Cutout = forwardRef<HTMLDivElement, CutoutProps>(function Cutout({ intensity, play, label, field, ...rest }, ref) {
+  const Cutout = forwardRef<HTMLDivElement, CutoutProps>(function Cutout({ intensity, play, label, field, wait = true, ...rest }, ref) {
     const el = useRef<HTMLDivElement>(null);
     const mounted = useRef<Mounted | null>(null);
     useImperativeHandle(ref, () => el.current!);
     // The drawing is in the first HTML the server sends; the effect below only adds motion to it.
-    const html = useMemo(() => svg(figure, { label: label ?? rest['aria-label'], field }), [label, rest['aria-label'], field]);
+    // A component always brings its script, so by default the parts wait for it instead of showing and starting over.
+    const html = useMemo(() => svg(figure, { label: label ?? rest['aria-label'], field, wait }), [label, rest['aria-label'], field, wait]);
     useEffect(() => {
       mounted.current = mount(el.current!, figure, { intensity, play });
       return () => mounted.current?.destroy();

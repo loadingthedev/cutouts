@@ -20,6 +20,7 @@ type Step = (dt: number) => boolean;
 // One loop for every figure on the page. A figure at rest leaves it; it stops when none is moving.
 const live = new Set<Step>();
 let last = 0;
+let starts = 0;
 function frame(now: number) {
   const dt = Math.min(0.032, (now - last) / 1000);
   last = now;
@@ -83,7 +84,8 @@ export function mount(target: Element, figure: Figure, options: Options = {}): M
   let on = false;
   let px = 100;
   let py = 100;
-  let clock = 0;
+  // Each figure starts its walk somewhere else, so a row of them playing does not move as one.
+  let clock = (starts += 2.3);
   let shown = false;
   let visible = false;
   let entering = 0;
@@ -178,6 +180,7 @@ export function mount(target: Element, figure: Figure, options: Options = {}): M
 
   // Hidden only until it scrolls into view. With reduced motion nothing is ever hidden.
   if (!still.matches) for (const el of fx) el.style.opacity = '0';
+  root.removeAttribute('data-wait');
   seen.observe(root);
   root.addEventListener('pointerenter', move);
   root.addEventListener('pointermove', move);
@@ -192,7 +195,7 @@ export function mount(target: Element, figure: Figure, options: Options = {}): M
       wake(step);
     },
     replay() {
-      if (!still.matches) enter();
+      if (shown && !still.matches) enter();
     },
     destroy() {
       seen.disconnect();
