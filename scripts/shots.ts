@@ -15,7 +15,8 @@ const script = await built.outputs[0]!.text();
 await mkdir('shots', { recursive: true });
 
 const browser = await chromium.launch({ channel: 'chrome' });
-for (const figure of picked) {
+// Five pages at a time: more than that and headless Chrome starts tearing the screenshots.
+for (let i = 0; i < picked.length; i += 5) await Promise.all(picked.slice(i, i + 5).map(async (figure) => {
   const page = await browser.newPage({ viewport: { width: SIZE, height: SIZE }, deviceScaleFactor: 1, reducedMotion: reduced ? 'reduce' : 'no-preference' });
   page.on('pageerror', (e) => console.error(figure.name, e.message));
   await page.setContent(`<body style="margin:0"><div id="f" data-name="${figure.name}">${svg(figure)}</div><script>${script}</script></body>`);
@@ -36,7 +37,9 @@ for (const figure of picked) {
   await page.setContent(
     `<body style="margin:0;padding:8px;background:#888;display:grid;grid-template-columns:repeat(5,${SIZE}px);gap:8px">${frames.map((f) => `<img width="${SIZE}" src="data:image/png;base64,${f.toString('base64')}">`).join('')}</body>`,
   );
+  // The viewport has just been resized; without a pause the sheet is sometimes captured half repainted.
+  await page.waitForTimeout(400);
   await page.screenshot({ path: `shots/${figure.name}${reduced ? '-reduced' : ''}.png` });
   await page.close();
-}
+}));
 await browser.close();
